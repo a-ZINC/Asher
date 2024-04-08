@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import Navbar from "@/components/ui/Navbar";
 import Provider from "@/components/ui/Provider";
 import "react-loading-skeleton/dist/skeleton.css"
+import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,6 +26,7 @@ export default function RootLayout({
             `min-h-screen font-sans antialiased grainy
             ${inter.className}`}
             suppressHydrationWarning={true} >
+            <Toaster/>
             <Navbar/>
             {children}
       </body>

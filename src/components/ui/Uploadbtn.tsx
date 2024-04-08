@@ -6,11 +6,51 @@ import { Button } from "./button";
 import Dropzone from 'react-dropzone';
 import { Cloud,File } from "lucide-react";
 import { Progress } from "./progress";
+import { useUploadThing } from "@/lib/uploadthing";
+import { useToast } from "@/components/ui/use-toast"
 const UploadDropzone=()=>{
+    const {toast}=useToast()
     const [uploadingfile,setuploadingfile]=useState<Boolean>(true)
-    const [uploadprogress,setuploadprogress]=useState<number>(0)
+    const [uploadprogress,setuploadprogress]=useState<number>(0);
+    const {startUpload}=useUploadThing('fileUploader')
+    const progresspercentage=()=>{
+        setuploadprogress(0);
+        const intervalid=setInterval(()=>{
+            setuploadprogress((prev)=>{
+                if(prev>=95){
+                    clearInterval(intervalid);
+                    return prev
+                }
+                return prev+5
+            });
+
+        },500);
+        return intervalid;
+    }
     return(
-        <Dropzone onDrop={acceptedFiles => console.log(acceptedFiles)} multiple={false}>
+        <Dropzone onDrop={async(acceptedFiles) => {
+           
+            const interval=progresspercentage();
+            const res=await startUpload(acceptedFiles);
+            if(!res){
+                toast({
+                    variant: "destructive",
+                    title: "Uh oh! Something went wrong.",
+                    description: "Try again later!",
+                  })
+            }
+            const key=res[0]?.key;
+            if(!key){
+                toast({
+                    variant: "destructive",
+                    title: "Uh oh! File upload failed.",
+                    description: "Try again later!",
+                  })
+            }
+            clearInterval(interval);
+            setuploadprogress(100);
+           
+        }} multiple={false}>
         {({getRootProps, getInputProps, acceptedFiles}) => (
             <section>
             <div {...getRootProps()} className='border h-64 m-4 border-dashed border-gray-300 rounded-lg'>
@@ -31,7 +71,7 @@ const UploadDropzone=()=>{
                     </p>
                   </div>
                   {acceptedFiles && acceptedFiles[0] ? (
-                    <div className='max-w-xs bg-white flex items-center rounded-md overflow-hidden outline outline-[1px] outline-zinc-200 divide-x divide-zinc-200'>
+                    <div className='max-w-xs mb-2 bg-white flex items-center rounded-md overflow-hidden outline outline-[1px] outline-zinc-200 divide-x divide-zinc-200'>
                     <div className='px-3 py-2 h-full grid place-items-center'>
                         <File className='h-4 w-4 text-blue-500' />
                     </div>

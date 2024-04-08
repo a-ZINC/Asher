@@ -14,12 +14,14 @@
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-progress": "^1.0.3",
     "@radix-ui/react-slot": "^1.0.2",
+    "@radix-ui/react-toast": "^1.1.5",
     "@tailwindcss/typography": "^0.5.12",
     "@tanstack/react-query": "^5.29.0",
     "@trpc/client": "^11.0.0-rc.332",
     "@trpc/next": "^11.0.0-rc.332",
     "@trpc/react-query": "^11.0.0-rc.332",
     "@trpc/server": "^11.0.0-rc.332",
+    "@uploadthing/react": "^6.4.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "date-fns": "^3.6.0",
@@ -32,6 +34,7 @@
     "react-pdf": "^7.7.1",
     "tailwind-merge": "^2.2.2",
     "tailwindcss-animate": "^1.0.7",
+    "uploadthing": "^6.7.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
