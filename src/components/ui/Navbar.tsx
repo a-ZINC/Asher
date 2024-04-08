@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { buttonVariants } from "./button";
-import { LoginLink,RegisterLink } from "@kinde-oss/kinde-auth-nextjs/server";
+import { getKindeServerSession, LoginLink,LogoutLink,RegisterLink } from "@kinde-oss/kinde-auth-nextjs/server";
 import { ArrowRight } from "lucide-react";
 
 
-const Navbar = () => {
+const Navbar = async() => {
+    const {getUser}=getKindeServerSession();
+    const user= await getUser();
     return (
         <nav className="h-14 bg-white/75 backdrop-blur-lg transition-all sticky inset-x-0 top-0 z-30 w-full border-b border-gray-200 ">
             <div className="mx-auto w-full max-w-screen-xl px-2.5 md:px-20">
@@ -24,7 +26,7 @@ const Navbar = () => {
                                 })}>
                                 Pricing
                             </Link>
-                            <LoginLink
+                            {!user &&<> <LoginLink
                                 
                                 className={buttonVariants({
                                     size:"sm",
@@ -39,7 +41,18 @@ const Navbar = () => {
                                 })}>
                                 Get started{' '}
                                 <ArrowRight className='ml-1.5 h-5 w-5' />
-                            </RegisterLink>
+                            </RegisterLink></>}
+
+                            {
+                            user &&<> <LogoutLink
+                                
+                                className={buttonVariants({
+                                    size:"sm",
+                                    
+                                })}>
+                                Logout
+                            </LogoutLink></>
+                            }
                         </>
                     </div>
                 </div>

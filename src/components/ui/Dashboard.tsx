@@ -7,13 +7,27 @@ import Link from "next/link";
 import { Plus,Trash,Loader2,MessageSquare } from "lucide-react";
 import {format} from 'date-fns';
 import { Button } from "./button";
+import { useEffect,useState } from "react";
 
 const Dashboard = () => {
+    const utils=trpc.useUtils();
+    const [currentlydeletefile,setcurrentlydeletefile]=useState<String|null>(null)
     const {data:files,isLoading}=trpc.getUserFile.useQuery();
     
-    const {mutate: deleteFile}
+    const deletefile=trpc.deleteFile.useMutation();
+    
+    useEffect(()=>{
+        if(deletefile.isSuccess){
+        setcurrentlydeletefile(null);
+        utils.getUserFile.invalidate();
+        }
+    },[deletefile.isSuccess]);
+    const deletehandler=(id:string)=>{
+        setcurrentlydeletefile(id);
+        deletefile.mutate({ id: id });
+    }
     return (
-        <main className="mx-auto max-w-7xl md:pt-10">
+        <main className="mx-auto max-w-7xl md:pt-10 px-4">
             <div className='mt-8 flex flex-col items-start justify-between gap-4 border-b border-gray-200 pb-5 sm:flex-row sm:items-center sm:gap-0'>
                 <h1 className='mb-3 font-bold text-5xl text-gray-900'>
                 My Files
@@ -54,13 +68,11 @@ const Dashboard = () => {
                             </div>
 
                             <Button
-                                onClick={() =>
-                                deleteFile({ id: file.id })
-                                }
+                                onClick={() =>deletehandler(file.id)}
                                 size='sm'
                                 className='w-full'
                                 variant='destructive'>
-                                {currentlyDeletingFile === file.id ? (
+                                {currentlydeletefile===file.id ? (
                                 <Loader2 className='h-4 w-4 animate-spin' />
                                 ) : (
                                 <Trash className='h-4 w-4' />

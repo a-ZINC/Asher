@@ -36,8 +36,8 @@ export const appRouter = router({
         })
     }),
     deleteFile: privateProcedure.input(z.object({id:z.string()}))
-    .mutation(async(req,{input})=>{
-        const {ctx}=req;
+    .mutation(async({ctx,input})=>{
+        console.log(input)
         const {userId}=ctx;
 
         const file=await db.file.findFirst({
