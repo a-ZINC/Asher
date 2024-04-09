@@ -1,16 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogTrigger } from "./dialog";
 import { Button } from "./button";
 import Dropzone from 'react-dropzone';
-import { Cloud,File } from "lucide-react";
+import { Cloud,File,Loader2 } from "lucide-react";
 import { Progress } from "./progress";
 import { useUploadThing } from "@/lib/uploadthing";
 import { useToast } from "@/components/ui/use-toast"
+import { trpc } from "@/app/_trpc/client";
+import { redirect } from "next/dist/server/api-utils";
+import { useRouter } from "next/navigation";
 const UploadDropzone=()=>{
+    const router=useRouter()
     const {toast}=useToast()
-    const [uploadingfile,setuploadingfile]=useState<Boolean>(true)
+    const [uploadingfile,setuploadingfile]=useState<Boolean>(false)
     const [uploadprogress,setuploadprogress]=useState<number>(0);
     const {startUpload}=useUploadThing('fileUploader')
     const progresspercentage=()=>{
@@ -27,9 +31,19 @@ const UploadDropzone=()=>{
         },500);
         return intervalid;
     }
+    const fileData=trpc.getFile.useMutation({
+        retry:true,
+        retryDelay:500
+    });
+    useEffect(()=>{
+        if(fileData.isSuccess){
+            console.log(fileData)
+            router.push(`/dashboard/${fileData?.data?.id}`)
+        }
+    },[fileData.isSuccess])
     return(
         <Dropzone onDrop={async(acceptedFiles) => {
-           
+            setuploadingfile(true);
             const interval=progresspercentage();
             const res=await startUpload(acceptedFiles);
             if(!res){
@@ -47,9 +61,10 @@ const UploadDropzone=()=>{
                     description: "Try again later!",
                   })
             }
+           
             clearInterval(interval);
             setuploadprogress(100);
-           
+            fileData.mutate({key})
         }} multiple={false}>
         {({getRootProps, getInputProps, acceptedFiles}) => (
             <section>
@@ -58,6 +73,10 @@ const UploadDropzone=()=>{
             <label
               htmlFor='dropzone-file'
               className='flex flex-col items-center justify-center w-full h-full rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100'>
+                <input {...getInputProps()}
+                   type='file'
+                   id='dropzone-file'
+                   className="hidden"/>
                  <div className='flex flex-col items-center justify-center pt-5 pb-6'>
                     <Cloud className='h-6 w-6 text-zinc-500 mb-2' />
                     <p className='mb-2 text-sm text-zinc-700'>
@@ -70,6 +89,7 @@ const UploadDropzone=()=>{
                     PDF (up to 4MB)
                     </p>
                   </div>
+
                   {acceptedFiles && acceptedFiles[0] ? (
                     <div className='max-w-xs mb-2 bg-white flex items-center rounded-md overflow-hidden outline outline-[1px] outline-zinc-200 divide-x divide-zinc-200'>
                     <div className='px-3 py-2 h-full grid place-items-center'>
@@ -82,11 +102,19 @@ const UploadDropzone=()=>{
                     ) : null}
                    {
                     uploadingfile?(
-                        <div className="w-3/4"><Progress value={uploadprogress}/></div>
+                        <div className="w-3/4"><Progress value={uploadprogress} />
+                        {uploadprogress===100 ?(
+                            <div className='flex gap-1 items-center justify-center text-sm text-zinc-700 text-center pt-2'>
+                            <Loader2 className='h-3 w-3 animate-spin' />
+                            Redirecting...
+                          </div>
+                        ):(null)}
+                        </div>
                     ):(
                         null
                     )
                    }
+                   
               </label>
             </div>
             </div>
