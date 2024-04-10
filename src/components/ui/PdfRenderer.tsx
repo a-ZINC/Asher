@@ -23,15 +23,17 @@ const PdfRenderer = ({url}:PdfRendererProps) => {
     const prevPageHandler=()=>{
         if(currpage===1) return;
         setcurrpage(currpage-1);
+        setinputpage(String(currpage-1));
     }
     const nextPageHandler=()=>{
         if(currpage===numPages) return;
         setcurrpage(currpage+1);
+        setinputpage(String(currpage+1));
     }
     const inputPageHandler=(e:ChangeEvent<HTMLInputElement>)=>{
-        console.log(e)
-        console.log(Number(e.target.value));
-        if(!Number(e.target.value)){
+        //console.log(e)
+        //console.log(e.target);
+        if(isNaN(Number(e.target.value))){
             e.preventDefault();
             return;
         }
@@ -40,10 +42,24 @@ const PdfRenderer = ({url}:PdfRendererProps) => {
             setinputpage(String(numPages))
             return;
         }
+        
      
         setinputpage(e.target.value)
         
 
+    }
+    const keydownhandler=(e:React.KeyboardEvent<HTMLDivElement>)=>{
+        console.log(e);
+        console.log(inputpage);
+        if(e.code==='Enter'){
+            if(inputpage===""){ 
+                setinputpage('1');
+                setcurrpage(1);
+                return;
+            }
+
+            setcurrpage(Number(inputpage));
+        }
     }
     return (
         <div className="w-full bg-white rounded-md shadow flex flex-col items-center
@@ -54,7 +70,7 @@ const PdfRenderer = ({url}:PdfRendererProps) => {
                         <ChevronDown className='h-4 w-4'/>
                     </Button>
                     <div className='flex items-center gap-1.5'>
-                        <input type='text' className='w-12 h-8' value={inputpage} onChange={(e)=>inputPageHandler(e)}  />
+                        <input type='text' className='w-12 h-8' value={inputpage} onChange={(e)=>inputPageHandler(e)} onKeyDown={(e)=>keydownhandler(e)}  />
                         <p className='text-zinc-700 text-sm space-x-1'>
                             <span>/</span>
                             <span>{numPages ?? 'x'}</span>
