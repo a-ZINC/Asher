@@ -23,7 +23,7 @@ export const ourFileRouter = {
     })
     .onUploadComplete(async ({ metadata, file }) => {
       console.log(file)
-      const dreatefile=await db.file.create({
+      const createfile=await db.file.create({
         data:{
           key:file.key,
           name:file.name,
@@ -31,7 +31,16 @@ export const ourFileRouter = {
           url:file.url,
           uploadStatus: 'PROCESSING'
         }
-      })
+      });
+      console.log(createfile)
+      try{
+        const response = await fetch(createfile?.url);
+        console.log(response);
+        const blob=
+      }catch(error){
+
+      }
+
     }),
 } satisfies FileRouter;
  
