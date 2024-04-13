@@ -9,7 +9,11 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@google-ai/generativelanguage": "^0.2.1",
     "@kinde-oss/kinde-auth-nextjs": "^2.2.3",
+    "@langchain/community": "^0.0.48",
+    "@langchain/google-genai": "^0.0.11",
+    "@langchain/pinecone": "^0.0.4",
     "@pinecone-database/pinecone": "^2.2.0",
     "@prisma/client": "^5.12.1",
     "@radix-ui/react-dialog": "^1.0.5",
@@ -27,8 +31,11 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "date-fns": "^3.6.0",
+    "google-auth-library": "^8.9.0",
+    "langchain": "^0.1.33",
     "lucide-react": "^0.365.0",
     "next": "14.1.4",
+    "pdf-parse": "^1.1.1",
     "react": "^18",
     "react-dom": "^18",
     "react-dropzone": "^14.2.3",

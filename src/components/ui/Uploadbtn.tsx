@@ -46,6 +46,7 @@ const UploadDropzone=()=>{
             setuploadingfile(true);
             const interval=progresspercentage();
             const res=await startUpload(acceptedFiles);
+            console.log(res)
             if(!res){
                 toast({
                     variant: "destructive",
