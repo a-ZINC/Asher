@@ -8,6 +8,10 @@ import { PineconeStore } from "@langchain/pinecone";
 import { OpenAIEmbeddings } from "@langchain/openai";
 import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
 import { TaskType } from "@google/generative-ai";
+import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
+import { HarmBlockThreshold, HarmCategory } from "@google/generative-ai";
+import { GoogleGenerativeAIStream, Message, StreamingTextResponse } from 'ai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
  
 const f = createUploadthing();
  
@@ -41,28 +45,28 @@ export const ourFileRouter = {
       console.log(createfile)
       try{
         const response = await fetch(createfile?.url);
-        console.log("response:",response);
+       
         const blob= await response.blob();
-        console.log("blob:",blob);
+     
         const loader=new PDFLoader(blob);
         const docs=await loader.load();
         const pageAmt=docs.length;
-        console.log("docs:",docs)
-        console.log("pinecone",pinecone)
+        console.log("docs:",docs[0]?.pageContent)
+      
         const pineconeIndex=pinecone.index('asher2');
-        console.log(pineconeIndex)
+        
         const embeddings = new GoogleGenerativeAIEmbeddings({
           model: "embedding-001", // 768 dimensions
           taskType: TaskType.RETRIEVAL_DOCUMENT,
           title: "Document title",
         });
-        console.log("embeddings:",embeddings)
+        
         const pineconedocs=await PineconeStore.fromDocuments(docs, embeddings, {
           pineconeIndex,
           namespace:createfile.id,
           maxConcurrency: 5, 
         });
-        console.log('pinecone storedd',pineconedocs)
+       
         await db.file.update({
           data:{
             uploadStatus:"SUCCESS"
@@ -70,9 +74,11 @@ export const ourFileRouter = {
           where:{
             id:createfile.id
           }
-        })
-        console.log('db mein uopdated')
-      }catch(error){
+        });
+
+
+        
+    }catch(error){
         console.log(error);
         await db.file.update({
           data:{

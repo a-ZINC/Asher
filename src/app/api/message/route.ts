@@ -6,13 +6,17 @@ import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
 import { TaskType } from "@google/generative-ai";
 import { pinecone } from "@/lib/pinecone";
 import { PineconeStore } from "@langchain/pinecone";
+import { model } from "@/lib/googlechat";
+import { HumanMessage } from "@langchain/core/messages";
+
+
 
 export const POST = async(req:NextRequest)=>{
 
     const body=await req.json();
     const {getUser}=getKindeServerSession();
     const user=await getUser();
-
+    console.log("user",user)
     if(!user?.id){
         return new Response('Unauthorized',{status:401})
     }
@@ -27,7 +31,7 @@ export const POST = async(req:NextRequest)=>{
     });
 
     if(!file) return new Response('Not Found',{status:404})
-    
+        console.log("file",file)
     await db.message.create({
         data:{
             text:message,
@@ -50,8 +54,8 @@ export const POST = async(req:NextRequest)=>{
         pineconeIndex,
         namespace:file.id
     });
-
-    const result=await vectorStore.similaritySearch(message,4);
+    console.log("vectorStore",vectorStore)
+    const results=await vectorStore.similaritySearch(message,4);
     const prevMessage=await db.message.findMany({
         where:{
             fileId
@@ -66,4 +70,51 @@ export const POST = async(req:NextRequest)=>{
         role:msg.isUserMessage? "user" as const : "assistant" as const,
         content:msg.text
     }))
+    console.log("formatted",formattedMessages)
+    const input2 = [
+        new HumanMessage({
+          content: [
+            {   
+                type:'text',
+                role: 'assistant',
+                text:
+                  'Use the following pieces of context (or previous conversaton if needed) to answer the users question in markdown format.',
+              },
+              { 
+                type:'text',
+                role: 'user',
+                text: `Use the following pieces of context (or previous conversaton if needed) to answer the users question in markdown format. \nIf you don't know the answer, just say that you don't know, don't try to make up an answer.
+                
+          \n----------------\n
+          
+          PREVIOUS CONVERSATION:
+          ${formattedMessages.map((message) => {
+            if (message.role === 'user') return `User: ${message.content}\n`
+            return `Assistant: ${message.content}\n`
+          })}
+          
+          \n----------------\n
+          
+          CONTEXT:
+          ${results.map((r) => r.pageContent).join('\n\n')}
+          
+          USER INPUT: ${message}`,
+              },
+          ],
+        }),
+      ];
+    const answer=await model.invoke(input2);
+    console.log('hello');
+    console.log(answer);
+    await db.message.create({
+        data:{
+            fileId,
+            isUserMessage:false,
+            userId:user?.id,
+            text:String(answer.content)
+        }
+    });
+    console.log(String(answer.content))
+    return  new Response(String(answer.content));
 }
+

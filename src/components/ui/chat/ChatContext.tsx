@@ -7,6 +7,7 @@ type StreamResponse={
     message:string,
     handleInputChange:(event:React.ChangeEvent<HTMLTextAreaElement>)=>void,
     isLoading:boolean,
+    setMessage:React.Dispatch<React.SetStateAction<string>>
 }
 
 export const ChatContext= createContext<StreamResponse>({
@@ -14,6 +15,7 @@ export const ChatContext= createContext<StreamResponse>({
     message:"",
     handleInputChange:()=>{},
     isLoading:false,
+    setMessage:(prevState)=>'',
 });
 interface Props{
     fileId:string,
@@ -26,6 +28,7 @@ export const ChatContextProvider=({fileId,children}:Props)=>{
 
     const {mutate:sendMessage}=useMutation({
         mutationFn: async ({message}:{message:string})=>{
+            setisLoading(true);
             const response=await fetch('/api/message',{
                 method:"POST",
                 body: JSON.stringify({
@@ -36,6 +39,7 @@ export const ChatContextProvider=({fileId,children}:Props)=>{
             if(!response){
                 throw new Error("failed to send message");
             }
+            setisLoading(false);
             return response.body
         }
     })
@@ -52,7 +56,8 @@ export const ChatContextProvider=({fileId,children}:Props)=>{
                 addMessage,
                 message,
                 handleInputChange,
-                isLoading
+                isLoading,
+                setMessage
             }
 
         }>
