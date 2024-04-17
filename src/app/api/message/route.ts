@@ -1,13 +1,14 @@
 import { db } from "@/db";
 import { SendMessageValidator } from "@/lib/validators/SendMessageValidator";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
 import { TaskType } from "@google/generative-ai";
 import { pinecone } from "@/lib/pinecone";
 import { PineconeStore } from "@langchain/pinecone";
 import { model } from "@/lib/googlechat";
 import { HumanMessage } from "@langchain/core/messages";
+import { object } from "zod";
 
 
 
@@ -106,15 +107,15 @@ export const POST = async(req:NextRequest)=>{
     const answer=await model.invoke(input2);
     console.log('hello');
     console.log(answer);
-    await db.message.create({
+    const messagecreated=await db.message.create({
         data:{
             fileId,
             isUserMessage:false,
             userId:user?.id,
-            text:String(answer.content)
+            text:'heeloo'
         }
     });
-    console.log(String(answer.content))
-    return  new Response(String(answer.content));
+    
+    return  NextResponse.json(messagecreated)
 }
 

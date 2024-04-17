@@ -9,7 +9,7 @@ interface ChatInputProps{
     isDisabled?: boolean
 }
 const ChatInput = ({isDisabled}:ChatInputProps) => {
-    const {message,addMessage,isLoading,handleInputChange,setMessage}=useContext(ChatContext);
+    const {message,addMessage,isLoading,handleInputChange,setMessage,isPending}=useContext(ChatContext);
 
     const textref=useRef<HTMLTextAreaElement>(null);
     return (
@@ -23,13 +23,11 @@ const ChatInput = ({isDisabled}:ChatInputProps) => {
                                     e.preventDefault();
 
                                     addMessage(); 
-                                    if(textref.current){
-                                        setMessage(''); textref.current.focus()
-                                    }
+                                    
                                 }
                             }}
                             className="resize-none pr-12 text-base py-3 scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch "/>
-                            <Button className='absolute bottom-[50%] translate-y-1/2 right-[7px] h-9 w-12' aria-label='send message' onClick={()=>{addMessage(); if(textref.current){setMessage(''); textref.current.focus()}}}>
+                            <Button className='absolute bottom-[50%] translate-y-1/2 right-[7px] h-9 w-12' aria-label='send message' onClick={()=>{addMessage();}}>
                                 {isLoading || isDisabled ?
                                 (<Loader2 className='h-4 w-4 text-blue-500 animate-spin'/>):
 
