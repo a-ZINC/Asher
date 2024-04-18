@@ -29,12 +29,67 @@ interface Props{
     fileId:string,
     children:ReactNode
 }
+
 export const ChatContextProvider=({fileId,children}:Props)=>{
     const [message,setMessage]=useState<string>('');
     const [backupmessage,setbackupMessage]=useState<string>('');
     const [isLoading,setisLoading]=useState(false);
     const {toast}=useToast();
     const utils=trpc.useContext();
+    let accResponse='';
+    const aiResposneGEnerated=({chunkValue,fileId}:{chunkValue:string,fileId:string})=>{
+        accResponse+=chunkValue;
+                    
+    
+                    utils.getFileMessages.setInfiniteData({
+                        fileId,limit:INFINITELIMIT
+                    },(old)=>{
+                        if(!old){
+                            return { pages: [], pageParams: [] }
+                        }
+                        
+                        let isAiResponseCreated = old.pages.some(
+                            (page) =>
+                              page.message.some(
+                                (mes) => mes.id === 'ai-response'
+                              )
+                          );
+                        let updatedPages=old.pages.map((page)=>{
+                            if(page===old.pages[0]){
+                                let updatedMessage;
+                                if(!isAiResponseCreated){
+                                    updatedMessage=[{
+                                        createdAt: new Date().toISOString(),
+                                        id: 'ai-response',
+                                        text: accResponse,
+                                        isUserMessage: false,
+                                    },...page.message];
+                                }
+                                else{
+                                    updatedMessage = page.message.map(
+                                        (mess) => {
+                                          if (mess.id === 'ai-response') {
+                                            return {
+                                              ...mess,
+                                              text: accResponse,
+                                            }
+                                          }
+                                          return mess
+                                        }
+                                      )
+                                }
+                                return {
+                                    ...page,
+                                    message:updatedMessage
+                                }
+                            }
+                            return page
+                        });
+                        
+                        return {...old,pages:updatedPages}
+                          
+                })
+    }
 
     const {mutate:sendMessage,isPending,isSuccess,data}=useMutation({
         mutationFn: async ({message}:{message:string})=>{
@@ -50,7 +105,7 @@ export const ChatContextProvider=({fileId,children}:Props)=>{
             if(!response){
                 throw new Error("failed to send message");
             }
-            setisLoading(false);
+            
             return response.body
         },
         onMutate: async ({message})=>{
@@ -97,7 +152,7 @@ export const ChatContextProvider=({fileId,children}:Props)=>{
         setisLoading(true);
         },
         onSuccess:async(stream)=>{
-            setisLoading(false);
+            
             if (!stream) {
                 return toast({
                   title: 'There was a problem sending this message',
@@ -106,8 +161,25 @@ export const ChatContextProvider=({fileId,children}:Props)=>{
                   variant: 'destructive',
                 })
               }
-            console.log(stream);
-        }
+          
+            const reader=await stream.getReader().read();
+            const decoder=new TextDecoder();
+            const data=decoder.decode(reader.value);
+            
+            
+            data.split('').map((chunkValue,ind)=>{
+                const time = Math.random()*2000;
+                setTimeout(()=>{
+                    aiResposneGEnerated({chunkValue,fileId})
+                },time)
+                
+            })
+        },
+
+        onSettled:async()=>{
+            setisLoading(false);
+            await utils.getFileMessages.invalidate()
+        },
 
     })
 

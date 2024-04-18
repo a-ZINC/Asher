@@ -9,8 +9,19 @@ import { PineconeStore } from "@langchain/pinecone";
 import { model } from "@/lib/googlechat";
 import { HumanMessage } from "@langchain/core/messages";
 import { object } from "zod";
+import { GoogleGenerativeAIStream, Message, StreamingTextResponse } from 'ai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
+import { Stream } from "stream";
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY || '');
 
-
+const buildGoogleGenAIPrompt = (messages:Message[]) => ({
+    contents: messages
+      .filter(message => message.role === 'user' || message.role === 'assistant')
+      .map(message => ({
+        role: message.role === 'user' ? 'user' : 'model',
+        parts: { text: message.content },
+      })),
+  });
 
 export const POST = async(req:NextRequest)=>{
 
@@ -104,18 +115,21 @@ export const POST = async(req:NextRequest)=>{
           ],
         }),
       ];
+      
+
+      
     const answer=await model.invoke(input2);
     console.log('hello');
     console.log(answer);
-    const messagecreated=await db.message.create({
-        data:{
-            fileId,
-            isUserMessage:false,
-            userId:user?.id,
-            text:'heeloo'
-        }
-    });
     
-    return  NextResponse.json(messagecreated)
+    await db.message.create({
+        data: {
+          text: String(answer.content),
+          isUserMessage: false,
+          fileId,
+          userId:user.id,
+        }});
+
+    return new Response(String(answer.content));
 }
 

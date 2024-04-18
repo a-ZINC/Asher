@@ -19,7 +19,7 @@ const Message = ({msg,isSameUserMsg}:{msg:Messageprops,isSameUserMsg:boolean}) =
                 <Icons.logo className='fill-zinc-300 h-3/4 w-3/4' />
             )}
             </div>
-            <div className={`flex flex-col space-y-2 text-base max-w-md mx-2 ${msg.isUserMessage?'order-1 items-end':'order-2 items-start'} ${isSameUserMsg?'hidden':''} ${msg.id==='pending-message'?'opacity-60':'opacity-100'} `}>
+            <div className={`flex flex-col space-y-2 text-base max-w-md mx-2 ${msg.isUserMessage?'order-1 items-end':'order-2 items-start'} ${isSameUserMsg?'hidden':''} `}>
                 <div className={`px-4 py-2 rounded-lg inline-block ${msg.isUserMessage? 'bg-blue-600 text-white':'bg-gray-200 text-gray-900'} ${!isSameUserMsg && msg.isUserMessage && 'rounded-br-none'} ${!isSameUserMsg && !msg.isUserMessage && 'rounded-bl-none'}`}>
                     {
                         typeof msg.text==='string'?(

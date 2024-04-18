@@ -48,7 +48,6 @@ const Messages = ({fileId}:MsgProps) => {
 
       const combinedmessage=[
         ...(isLoading?[loadingMessage]:[]),
-        ...(isPending?[pendingMessage]:[]),
         ...(mess ?? [])
 
       ]
