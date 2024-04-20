@@ -21,6 +21,7 @@ const Dashboard = () => {
         setcurrentlydeletefile(null);
         utils.getUserFile.invalidate();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     },[deletefile.isSuccess]);
     const deletehandler=(id:string)=>{
         setcurrentlydeletefile(id);

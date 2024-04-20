@@ -58,7 +58,7 @@ const Messages = ({fileId}:MsgProps) => {
             console.log('hello')
             messages.fetchNextPage();
         }
-
+        // eslint-disable-next-line react-hooks/exhaustive-deps
       },[entry,messages.fetchNextPage]);
 
       console.log(messages.data);

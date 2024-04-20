@@ -24,6 +24,7 @@ const Page = () => {
                 router.push('/sign-in')
               }
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     },[isSuccess,isError])
     
     return (

@@ -40,6 +40,7 @@ const UploadDropzone=()=>{
             console.log(fileData)
             router.push(`/dashboard/${fileData?.data?.id}`)
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     },[fileData.isSuccess])
     return(
         <Dropzone onDrop={async(acceptedFiles) => {
@@ -54,6 +55,8 @@ const UploadDropzone=()=>{
                     description: "Try again later!",
                   })
             }
+            else{
+            
             const key=res[0]?.key;
             if(!key){
                 toast({
@@ -65,7 +68,7 @@ const UploadDropzone=()=>{
            
             clearInterval(interval);
             setuploadprogress(100);
-            fileData.mutate({key})
+            fileData.mutate({key})}
         }} multiple={false}>
         {({getRootProps, getInputProps, acceptedFiles}) => (
             <section>
@@ -125,7 +128,7 @@ const UploadDropzone=()=>{
     );
 }
 const Uploadbtn = () => {
-    const [open,setIsopen]=useState<Boolean>(false)
+    const [open,setIsopen]=useState<boolean>(false);
     return (
         <Dialog
             open={open}
