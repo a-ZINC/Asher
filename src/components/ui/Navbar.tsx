@@ -2,6 +2,7 @@ import Link from "next/link";
 import { buttonVariants } from "./button";
 import { getKindeServerSession, LoginLink,LogoutLink,RegisterLink } from "@kinde-oss/kinde-auth-nextjs/server";
 import { ArrowRight } from "lucide-react";
+import UserAccDropDown from "./UserAccDropDown";
 
 
 const Navbar = async() => {
@@ -18,6 +19,8 @@ const Navbar = async() => {
 
                     <div className="hidden sm:flex items-center space-x-4 ">
                         <>
+                            
+                            {!user &&<> 
                             <Link
                                 href={'/pricing'}
                                 className={buttonVariants({
@@ -26,7 +29,7 @@ const Navbar = async() => {
                                 })}>
                                 Pricing
                             </Link>
-                            {!user &&<> <LoginLink
+                            <LoginLink
                                 
                                 className={buttonVariants({
                                     size:"sm",
@@ -44,14 +47,16 @@ const Navbar = async() => {
                             </RegisterLink></>}
 
                             {
-                            user &&<> <LogoutLink
-                                
+                            user && <>
+                            <Link
+                                href={'/dashboard'}
                                 className={buttonVariants({
                                     size:"sm",
-                                    
+                                    variant: 'ghost'
                                 })}>
-                                Logout
-                            </LogoutLink></>
+                                Dashboard
+                            </Link>
+                            <UserAccDropDown/></>
                             }
                         </>
                     </div>
