@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import { trpc } from "../_trpc/client";
 import { useEffect } from "react";
 import { Loader2 } from 'lucide-react'
-function ChildPage() {
+function Page() {
     const router=useRouter();
     const searchparam=useSearchParams();
     const origin=searchparam.get('origin');
@@ -41,11 +41,11 @@ function ChildPage() {
     );
 }
 
-export function Page() {
+export function ChildPage() {
   return (
     
     <Suspense>
-      <ChildPage />
+      <Page />
     </Suspense>
   )
 }
