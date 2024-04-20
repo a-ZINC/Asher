@@ -25,6 +25,11 @@ Asher is a cutting-edge platform designed for seamless collaboration and communi
     - Real-time communication is a core feature of PDF Chat, allowing users to collaborate and communicate instantly while viewing PDF documents. Socket.IO is used to establish real-time communication channels between users, enabling instant messaging and document updates.
     - This functionality is achieved through streaming API responses, ensuring timely updates and fostering dynamic collaboration. By delivering updates in real-time, PDF Chat enhances collaboration and productivity, enabling users to work together seamlessly.
 
+  - **Scalability:**
+    - Asher's architecture is designed for scalability, leveraging cloud-based systems to handle growing user demands. By utilizing cloud-based infrastructure, Asher's platform can dynamically scale resources based on traffic fluctuations, ensuring optimal performance and reliability.
+    - NeonDB is used for PostgreSQL, providing scalability and reliability for data storage. With NeonDB, Asher's platform can handle large volumes of data and scale horizontally as user data grows.
+    - PineconeDB is utilized for storing vectorized messages, offering scalability and efficiency in managing document data. PineconeDB's vector-based approach ensures fast and efficient manipulation of document data, even as the user base expands.
+    - UploadThing is employed for PDF uploads, ensuring scalability and seamless file management. With UploadThing, Asher's platform can efficiently handle large file uploads and scale resources as needed to accommodate increasing demand for document uploads.
 
 
 
