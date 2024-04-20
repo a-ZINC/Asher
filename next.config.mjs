@@ -12,7 +12,7 @@ const nextConfig = {
         return [
             {
                 // matching all API routes
-                source: "/api/trpc/:path*",
+                source: "https://asher-ecru.vercel.app/api/:path*",
                 headers: [
                     { key: "Access-Control-Allow-Credentials", value: "true" },
                     { key: "Access-Control-Allow-Origin", value: "*" }, // replace this your actual origin
