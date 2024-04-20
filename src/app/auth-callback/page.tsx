@@ -41,7 +41,7 @@ function Page() {
     );
 }
 
-export function ChildPage() {
+export default function Childpage() {
   return (
     
     <Suspense>
