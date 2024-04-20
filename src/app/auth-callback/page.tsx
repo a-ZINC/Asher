@@ -1,5 +1,6 @@
 "use client"
 import { useRouter,useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import { trpc } from "../_trpc/client";
 import { useEffect } from "react";
 import { Loader2 } from 'lucide-react'
@@ -40,4 +41,11 @@ const Page = () => {
     );
 }
 
-export default Page;
+export function Searchbar() {
+  return (
+    
+    <Suspense>
+      <Page />
+    </Suspense>
+  )
+}
