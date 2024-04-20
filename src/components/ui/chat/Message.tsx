@@ -1,17 +1,25 @@
 import { format } from "date-fns";
 import { Icons } from "../Icons";
-import Markdown from 'react-markdown'
+import Markdown from 'react-markdown';
+import rehypeKatex from 'rehype-katex'
+import remarkMath from 'remark-math'
+import 'katex/dist/katex.min.css' 
+import { forwardRef } from "react";
 
 interface Messageprops{
     id:string,
     createdAt:string,
     isUserMessage:boolean,
-    text:JSX.Element | string
+    text:JSX.Element | string,
+}
+interface combinedPropops{
+    msg:Messageprops,
+    isSameUserMsg:boolean
 }
 
-const Message = ({msg,isSameUserMsg}:{msg:Messageprops,isSameUserMsg:boolean}) => {
+const Message = forwardRef<HTMLDivElement,combinedPropops>(({msg,isSameUserMsg},ref) => {
     return (
-        <div className={`flex items-end ${msg.isUserMessage?'justify-end':''} `}>
+        <div className={`flex items-end ${msg.isUserMessage?'justify-end':''} `} ref={ref}>
             <div className={`relative flex h-6 w-6 aspect-square items-center justify-center ${msg.isUserMessage?'order-2 bg-blue-600 rounded-sm':'order-1 bg-zinc-800 rounded-sm'} ${isSameUserMsg?'hidden':''}`}>
             {msg.isUserMessage ? (
                 <Icons.user className='fill-zinc-200 text-zinc-200 h-3/4 w-3/4' />
@@ -24,7 +32,7 @@ const Message = ({msg,isSameUserMsg}:{msg:Messageprops,isSameUserMsg:boolean}) =
                     {
                         typeof msg.text==='string'?(
                             <Markdown
-                                className={`prose ${msg.isUserMessage?'text-zinc-50':''}`}>
+                                className={`prose ${msg.isUserMessage?'text-zinc-50':''}`} remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>
                                 {msg.text}
                             </Markdown>
                             
@@ -46,7 +54,10 @@ const Message = ({msg,isSameUserMsg}:{msg:Messageprops,isSameUserMsg:boolean}) =
             </div>
             
         </div>
-    );
+    )
 }
+)
+
+Message.displayName = 'Message'
 
 export default Message;

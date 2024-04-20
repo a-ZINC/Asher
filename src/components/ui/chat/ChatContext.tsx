@@ -165,13 +165,10 @@ export const ChatContextProvider=({fileId,children}:Props)=>{
             const reader=await stream.getReader().read();
             const decoder=new TextDecoder();
             const data=decoder.decode(reader.value);
-            
-            
             data.split('').map((chunkValue,ind)=>{
-                const time = Math.random()*2000;
                 setTimeout(()=>{
                     aiResposneGEnerated({chunkValue,fileId})
-                },time)
+                },1000);
                 
             })
         },
