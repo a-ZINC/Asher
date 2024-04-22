@@ -12,7 +12,7 @@ const Provider = ({children}:{children:ReactNode}) => {
         trpc.createClient({
           links: [
             httpBatchLink({
-              url:'http://localhost:3000/api/trpc'
+              url:'https://asher-ecru.vercel.app/api/trpc'
             }),
           ],
         })

@@ -8,8 +8,11 @@ import { Plus,Trash,Loader2,MessageSquare } from "lucide-react";
 import {format} from 'date-fns';
 import { Button } from "./button";
 import { useEffect,useState } from "react";
-
-const Dashboard = () => {
+import { getUserSubscriptionPlan } from "@/lib/stripe";
+interface PageProps {
+    subscriptionPlan: Awaited<ReturnType<typeof getUserSubscriptionPlan>>
+  }
+const Dashboard = ({subscriptionPlan}: PageProps) => {
     const utils=trpc.useUtils();
     const [currentlydeletefile,setcurrentlydeletefile]=useState<String|null>(null)
     const {data:files,isLoading}=trpc.getUserFile.useQuery();
@@ -33,7 +36,7 @@ const Dashboard = () => {
                 <h1 className='mb-3 font-bold text-5xl text-gray-900'>
                 My Files
                 </h1>
-                <Uploadbtn/>
+                <Uploadbtn isSubscribed={subscriptionPlan.isSubscribed}/>
             </div>
             {files && files.length!==0 ? (
                 <ul className="mt-8 grid grid-cols-1 gap-6 divide-y divide-zinc-200 md:grid-cols-2 lg:grid-cols-3 ">
