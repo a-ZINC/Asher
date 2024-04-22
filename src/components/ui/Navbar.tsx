@@ -3,6 +3,7 @@ import { buttonVariants } from "./button";
 import { getKindeServerSession, LoginLink,LogoutLink,RegisterLink } from "@kinde-oss/kinde-auth-nextjs/server";
 import { ArrowRight } from "lucide-react";
 import UserAccDropDown from "./UserAccDropDown";
+import MobileNav from "./MobileNav";
 
 
 const Navbar = async() => {
@@ -16,6 +17,8 @@ const Navbar = async() => {
                         href={"/"}
                         className='flex z-40 font-bold text-lg'
                     ><span>asher.</span></Link>
+
+                    <MobileNav isAuth={!!user}/>
 
                     <div className="hidden sm:flex items-center space-x-4 ">
                         <>
@@ -56,7 +59,13 @@ const Navbar = async() => {
                                 })}>
                                 Dashboard
                             </Link>
-                            <UserAccDropDown/></>
+                            <UserAccDropDown name={
+                                !user.given_name || !user.family_name
+                                ? 'Your Account'
+                                : `${user.given_name} ${user.family_name}`
+                            }
+                            email={user.email ?? ''}
+                            imageUrl={user.picture ?? ''}/></>
                             }
                         </>
                     </div>
